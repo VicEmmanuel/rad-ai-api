@@ -28,11 +28,11 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Install PHP dependencies and optimize autoloader
 RUN composer install --no-dev --optimize-autoloader
 
+# Dump Composer's autoload files
+RUN composer dump-autoload
+
 # Ensure the correct permissions for storage and cache directories
 RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
-
-# Run migrations and seeder commands (optional, only if needed on every build)
-# RUN php artisan migrate --force && php artisan db:seed --force
 
 # Expose port 80 for Apache
 EXPOSE 80
