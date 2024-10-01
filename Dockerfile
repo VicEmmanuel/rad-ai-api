@@ -7,6 +7,9 @@ RUN apt-get update && apt-get install -y \
     && a2enmod rewrite \
     && docker-php-ext-install pdo_pgsql zip
 
+# Set DocumentRoot to public directory
+RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available/000-default.conf \
+    && sed -i 's|/var/www|/var/www/html/public|g' /etc/apache2/apache2.conf
 
 COPY . /var/www/html
 
