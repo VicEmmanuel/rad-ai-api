@@ -9,9 +9,11 @@ RUN apt-get update && apt-get install -y \
     && a2enmod rewrite \
     && docker-php-ext-install pdo_pgsql zip
 
+# Copy your custom Apache configuration
+COPY ./000-default.conf /etc/apache2/sites-available/000-default.conf
+
 # Set DocumentRoot to Laravel's public directory
-RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available/000-default.conf \
-    && sed -i 's|/var/www|/var/www/html/public|g' /etc/apache2/apache2.conf
+RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available/000-default.conf
 
 # Copy the app code into the container
 COPY . /var/www/html
@@ -27,9 +29,6 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 
 # Install PHP dependencies and optimize autoloader
 RUN composer install --no-dev --optimize-autoloader
-
-# Dump Composer's autoload files
-RUN composer dump-autoload
 
 # Ensure the correct permissions for storage and cache directories
 RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
