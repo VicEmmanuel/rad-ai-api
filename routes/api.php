@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthenticationController;
+use App\Http\Controllers\PredictionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -25,3 +26,11 @@ Route::post('resend-otp', [AuthenticationController::class, 'resendOtp']);
 Route::post('verify-otp', [AuthenticationController::class, 'verifyOtp']);
 Route::post('forgot-password', [AuthenticationController::class, 'forgotPassword']);
 Route::post('reset-password', [AuthenticationController::class, 'resetPassword']);
+
+
+Route::middleware(['jwt.verify'])->group(function () {
+    Route::post('predict', [PredictionController::class, 'makePrediction']);
+    Route::get('predictions', [PredictionController::class, 'predictionHistory']);
+
+});
+
