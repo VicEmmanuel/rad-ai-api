@@ -21,7 +21,10 @@ WORKDIR /var/www/html
 # Copy the application code into the container
 COPY . .
 
-# Set proper permissions for Laravel
+# Set the DocumentRoot to the public directory
+RUN echo "DocumentRoot /var/www/html/public" >> /etc/apache2/sites-available/000-default.conf
+
+# Configure permissions for Laravel storage and bootstrap/cache
 RUN chown -R www-data:www-data storage bootstrap/cache
 
 # Install Composer
