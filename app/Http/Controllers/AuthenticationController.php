@@ -105,7 +105,7 @@ class AuthenticationController extends Controller
             $response = $client->post('https://api.brevo.com/v3/smtp/email', [
                 'headers' => [
                     'accept' => 'application/json',
-                    'api-key' => env('BREVO_A   PI_KEY'),  // Fetch API key from environment variables
+                    'api-key' => env('BREVO_API_KEY'),  // Fetch API key from environment variables
                     'content-type' => 'application/json',
                 ],
                 'json' => [
