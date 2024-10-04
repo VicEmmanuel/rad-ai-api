@@ -65,7 +65,7 @@ class BlogController extends Controller
         $pageSize = $request->input('pageSize', 10);
 
         // Define the base URL for your public images
-        $imageBaseUrl = asset('blog-image'); // Adjust based on your public image path
+        $imageBaseUrl = asset('blogs'); // Adjust based on your public image path
 
         // Paginate the transactions
         $blog = Blog::orderBy('created_at', 'DESC')
