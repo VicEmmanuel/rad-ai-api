@@ -31,11 +31,14 @@ class BlogController extends Controller
             ], 422);
         }
 
+        $imageFile = $request->file('image');
 
-        $newImageName = uniqid() . $request->image->extension();
+
+        $newImageName = uniqid() . '.' . $imageFile->extension();
 //        $newImageName = uniqid() .'-' .$request->title . '.' . $request->image->extension();
 
-        $request->image->move(public_path('blog-image'), $newImageName);
+//        $request->image->move(public_path('blogs'), $newImageName);
+        $imageFile->move(public_path('blogs'), $newImageName);
 
         $description = $request->input('description');
         $user  = Auth::user();
@@ -48,7 +51,7 @@ class BlogController extends Controller
         ]);
 
         // Add the full URL for the image path
-        $post->image = url('blog-image/' . $newImageName);
+        $post->image = url('blogs/' . $newImageName);
 
         return $this->success([
             'post' => $post,
