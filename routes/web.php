@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\AuthenticationController;
+use App\Http\Controllers\BlogController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,5 +18,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return ['Laravel' => app()->version()];
 });
+
+//Route::get('blog', [BlogController::class, 'index']);
+//Route::get('login', [AuthenticationController::class, 'viewLoginPage']);
+
 
 require __DIR__.'/auth.php';

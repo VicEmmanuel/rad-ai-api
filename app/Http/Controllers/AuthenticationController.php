@@ -284,6 +284,11 @@ class AuthenticationController extends Controller
         return redirect()->intended($this->redirectPath());
     }
 
+    public function viewLoginPage()
+    {
+        return view('auth.login');
+    }
+
 
 
 

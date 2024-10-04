@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Blog;
+use App\Models\Post;
 use App\Traits\HttpResponses;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -88,6 +89,12 @@ class BlogController extends Controller
             'totalCount' => $blog->total(),
             'blog' => $blogItems,
         ], 'Blog retrieved successfully', 200);
+    }
+
+
+    public function index()
+    {
+        return view('blog.create',);
     }
 
 
