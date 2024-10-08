@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthenticationController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\PredictionController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -24,10 +25,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('login', [AuthenticationController::class, 'login']);
 Route::post('register', [AuthenticationController::class, 'register']);
-Route::post('resend-otp', [AuthenticationController::class, 'resendOtp']);
-Route::post('verify-otp', [AuthenticationController::class, 'verifyOtp']);
-Route::post('forgot-password', [AuthenticationController::class, 'forgotPassword']);
-Route::post('reset-password', [AuthenticationController::class, 'resetPassword']);
+Route::post('resendOtp', [AuthenticationController::class, 'resendOtp']);
+Route::post('verifyOtp', [AuthenticationController::class, 'verifyOtp']);
+Route::post('forgotPassword', [AuthenticationController::class, 'forgotPassword']);
+Route::post('resetPassword', [AuthenticationController::class, 'resetPassword']);
+
 Route::get('blog', [BlogController::class, 'fetchAllBlogs']);
 
 Route::middleware(['jwt.verify'])->group(function () {
@@ -36,5 +38,12 @@ Route::middleware(['jwt.verify'])->group(function () {
     Route::post('blog', [BlogController::class, 'store']);
     Route::post('comment', [CommentController::class, 'store']);
     Route::get('comment/{blogId}', [CommentController::class, 'fetchAllCommentsInBlog']);
+
+    ///User
+    Route::get('user/profile', [UserController::class, 'getUserProfile']);
+    Route::put('user/updateProfile', [UserController::class, 'updateProfile']);
+    Route::post('user/changePassword', [UserController::class, 'changePassword']);
+    Route::delete('user/deleteAccount', [UserController::class, 'deleteAccount']);
+    Route::post('user/updateImage', [UserController::class, 'updateProfileImage']);
 });
 
