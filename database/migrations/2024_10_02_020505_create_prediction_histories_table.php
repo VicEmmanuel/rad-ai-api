@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->string('image');              // To store the image path or base64 string
             $table->string('prediction_class');
-            $table->float('confidence');
+            $table->float('confidence', 8, 6);
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
