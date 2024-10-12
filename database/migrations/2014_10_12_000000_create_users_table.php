@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('lastname');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
+            $table->boolean('is_email_verified')->default(false); // Add is_email_verified field
             $table->string('password');
             $table->string('otp', 6)->nullable();
             $table->timestamp('otp_expires_at')->nullable();

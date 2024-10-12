@@ -99,6 +99,10 @@ class AuthenticationController extends Controller
             $user->otp = $otp;
             $user->otp_expires_at = Carbon::now()->addMinutes(10);
             $user->save();
+            $htmlContent = view('emails.otp_email', [
+                'firstname' => $user->firstname,
+                'otp' => $otp,
+            ])->render();
 
             // Send OTP via Brevo API
             $client = new \GuzzleHttp\Client();
@@ -110,7 +114,7 @@ class AuthenticationController extends Controller
                 ],
                 'json' => [
                     'sender' => [
-                        'name' => 'RadAi',
+                        'name' => 'AiRad Expert',
                         'email' => 'vicemmanuel7@gmail.com',
                     ],
                     'to' => [
@@ -120,7 +124,8 @@ class AuthenticationController extends Controller
                         ],
                     ],
                     'subject' => 'Your OTP Code',
-                    'htmlContent' => "<html><body><p>Hello {$user->firstname},</p><p>Your OTP code is: <strong>{$otp}</strong></p><p>This code is valid for 10 minutes.</p></body></html>",
+                    'htmlContent' => $htmlContent,
+//                    'htmlContent' => "<html><body><p>Hello {$user->firstname},</p><p>Your OTP code is: <strong>{$otp}</strong></p><p>This code is valid for 10 minutes.</p></body></html>",
                 ],
             ]);
 
@@ -156,18 +161,22 @@ class AuthenticationController extends Controller
             $user->otp = $otp;
             $user->otp_expires_at = Carbon::now()->addMinutes(10);
             $user->save();
+            $htmlContent = view('emails.otp_email', [
+                'firstname' => $user->firstname,
+                'otp' => $otp,
+            ])->render();
 
             // Send OTP via Brevo API
             $client = new Client();
             $response = $client->post('https://api.brevo.com/v3/smtp/email', [
                 'headers' => [
                     'accept' => 'application/json',
-                    'api-key' => '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',
+                    'api-key' => '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',
                     'content-type' => 'application/json',
                 ],
                 'json' => [
                     'sender' => [
-                        'name' => 'RadAi',
+                        'name' => 'AiRad Expert',
                         'email' => 'vicemmanuel7@gmail.com',
                     ],
                     'to' => [
@@ -177,7 +186,8 @@ class AuthenticationController extends Controller
                         ],
                     ],
                     'subject' => 'Your OTP Code',
-                    'htmlContent' => "<html><body><p>Hello {$user->firstname},</p><p>Your OTP code is: <strong>{$otp}</strong></p><p>This code is valid for 10 minutes.</p></body></html>",
+                    'htmlContent' => $htmlContent,
+//                    'htmlContent' => "<html><body><p>Hello {$user->firstname},</p><p>Your OTP code is: <strong>{$otp}</strong></p><p>This code is valid for 10 minutes.</p></body></html>",
                 ],
             ]);
 
