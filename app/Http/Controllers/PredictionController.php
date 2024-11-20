@@ -91,7 +91,6 @@ class PredictionController extends Controller
 //            ], 500);
 //        }
 //    }
-
     public function makePrediction(Request $request)
     {
         // Validate the request to ensure an image file is provided
@@ -111,7 +110,7 @@ class PredictionController extends Controller
 
         // Example API endpoint for making predictions
 //        $endpointUrl = 'https://pneumonia-detection-api-4via.onrender.com/predict';
-        $endpointUrl = 'https://rad-ai-api-wats.onrender.com/predict';
+        $endpointUrl = 'https://airadxpert-model-tdwg.onrender.com/predict';
 
         try {
             // Send POST request to the prediction API with the image as a file
@@ -168,6 +167,7 @@ class PredictionController extends Controller
             ], 500);
         }
     }
+
 
 //    public function predictionHistory(Request $request)
 //    {
