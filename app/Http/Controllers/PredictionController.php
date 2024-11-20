@@ -110,7 +110,8 @@ class PredictionController extends Controller
         $imageFile = $request->file('image');
 
         // Example API endpoint for making predictions
-        $endpointUrl = 'https://pneumonia-detection-api-4via.onrender.com/predict';
+//        $endpointUrl = 'https://pneumonia-detection-api-4via.onrender.com/predict';
+        $endpointUrl = 'https://rad-ai-api-wats.onrender.com/predict';
 
         try {
             // Send POST request to the prediction API with the image as a file
