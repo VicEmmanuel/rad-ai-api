@@ -92,82 +92,90 @@ class PredictionController extends Controller
 //        }
 //    }
     public function makePrediction(Request $request)
-    {
-        // Validate the request to ensure an image file is provided
-        $validator = Validator::make($request->all(), [
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048' // Adjust rules as needed
-        ]);
+{
+    // Validate the request to ensure an image file is provided
+    $validator = Validator::make($request->all(), [
+        'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048' // Adjust rules as needed
+    ]);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 'error',
-                'message' => $validator->errors()->first()
-            ], 422);
-        }
-
-        // Get the image file from the request
-        $imageFile = $request->file('image');
-
-        // Example API endpoint for making predictions
-//        $endpointUrl = 'https://pneumonia-detection-api-4via.onrender.com/predict';
-        $endpointUrl = 'https://airadxpert-model-tdwg.onrender.com/predict';
-
-        try {
-            // Send POST request to the prediction API with the image as a file
-            $response = Http::attach(
-                'file',  // The name of the field expected by the API
-                fopen($imageFile->getPathname(), 'r'),  // Open the file
-                $imageFile->getClientOriginalName() // Original file name (optional, but good practice)
-            )->post($endpointUrl);
-
-            // Check if the request was successful (status code 200-299)
-            $responseData = $response->json();
-            if ($responseData['status'] == "success") {
-
-                // Upload the image to Cloudinary
-                $cloudinaryUpload = cloudinary()->upload($imageFile->getRealPath(), [
-                    'folder' => 'predictions'
-                ]);
-                $cloudinaryUrl = $cloudinaryUpload->getSecurePath();  // Get the URL of the uploaded image
-
-                // Save prediction history if the user is authenticated
-                if (auth()->check()) {
-                    $userId = auth()->user()->id;
-
-                    PredictionHistory::create([
-                        'user_id' => $userId,
-                        'image' => $cloudinaryUrl,  // Store Cloudinary URL
-                        'prediction_class' => $responseData['data']['class'],
-                        'confidence' => $responseData['data']['confidence']
-                    ]);
-                }
-
-                // Return the response from the API
-                return response()->json([
-                    'status' => 'success',
-                    'message' => 'Prediction made successfully',
-                    'data' => $responseData['data'],
-                    'image_url' => $cloudinaryUrl // Return Cloudinary URL in response
-                ], 200);
-
-            } else {
-                // Handle API error responses
-                $errorMessage = $response->json()['message'] ?? 'Unknown error';
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Prediction failed: ' . $errorMessage
-                ], $response->status());
-            }
-
-        } catch (\Exception $e) {
-            // Handle any exceptions during the API call
-            return response()->json([
-                'status' => 'error',
-                'message' => 'An error occurred: ' . $e->getMessage()
-            ], 500);
-        }
+    if ($validator->fails()) {
+        return response()->json([
+            'status' => 'error',
+            'message' => $validator->errors()->first()
+        ], 422);
     }
 
+    // Get the image file from the request
+    $imageFile = $request->file('image');
+
+    // Example API endpoint for making predictions
+    $endpointUrl = 'https://airadxpert-model-tdwg.onrender.com/predict';
+
+    try {
+        // Send POST request to the prediction API with the image as a file
+        $response = Http::attach(
+            'file',  // The name of the field expected by the API
+            fopen($imageFile->getPathname(), 'r'),  // Open the file
+            $imageFile->getClientOriginalName() // Original file name (optional, but good practice)
+        )->post($endpointUrl);
+
+        // Check if the request was successful (status code 200-299)
+        $responseData = $response->json();
+        if ($responseData['status'] == "success") {
+
+            // Upload the image to Cloudinary
+            $cloudinaryUpload = cloudinary()->upload($imageFile->getRealPath(), [
+                'folder' => 'predictions'
+            ]);
+            $cloudinaryUrl = $cloudinaryUpload->getSecurePath();  // Get the URL of the uploaded image
+
+            // Save prediction history if the user is authenticated
+            if (auth()->check()) {
+                $userId = auth()->user()->id;
+
+                PredictionHistory::create([
+                    'user_id' => $userId,
+                    'image' => $cloudinaryUrl,  // Store Cloudinary URL
+                    'prediction_class' => $responseData['data']['class'],
+                    'confidence' => $responseData['data']['confidence']
+                ]);
+            }
+
+            // Now send the API response of the first API to a second API
+            $secondApiUrl = 'https://llmapi-cau3.onrender.com/predict';  
+            $secondApiResponse = Http::post($secondApiUrl, [
+                'first_api_response' => $responseData['data']['class']
+            ]);
+
+            // Get the response from the second API
+            $secondApiResponseData = $secondApiResponse->json();
+
+            // Return the response from both APIs
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Prediction made successfully',
+                'data' => $responseData['data'], // First API response data
+                'image_url' => $cloudinaryUrl,   // Cloudinary URL in response
+                'second_api_data' => $secondApiResponseData // Second API response data
+            ], 200);
+
+        } else {
+            // Handle API error responses
+            $errorMessage = $response->json()['message'] ?? 'Unknown error';
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Prediction failed: ' . $errorMessage
+            ], $response->status());
+        }
+
+    } catch (\Exception $e) {
+        // Handle any exceptions during the API call
+        return response()->json([
+            'status' => 'error',
+            'message' => 'An error occurred: ' . $e->getMessage()
+        ], 500);
+    }
+}
 
 //    public function predictionHistory(Request $request)
 //    {
